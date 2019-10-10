@@ -1,5 +1,6 @@
 package com.foodSafe.Blockchain.control;
 
+import java.sql.Array;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ public class WorkOutData {
         int NodeSize = 429;
         int matrix[][] = new int[NodeSize][NodeSize];
         int Dis[][] = new int[NodeSize][NodeSize];
+        int Core[][] = new int[NodeSize][NodeSize];
         double clustering = 0;
         double AvgPath = 0;
         //init matrix
@@ -22,11 +24,15 @@ public class WorkOutData {
             matrix[Integer.parseInt(map.get(i))][Integer.parseInt(map.get(j))] = 1;
             matrix[Integer.parseInt(map.get(j))][Integer.parseInt(map.get(i))] = 1;
         }
-        ShowMatrix(NodeSize,matrix);
+        //ShowMatrix(NodeSize,matrix);
         //work out node-degree distribution
         Degree = DegreeDis(NodeSize,matrix);
+        System.out.println(Degree);
         clustering = Clustering(NodeSize,matrix);
-        System.out.println(clustering);
+        //System.out.println(clustering);
+        Core = Coreness(NodeSize,matrix,Degree);
+        System.out.println(Core);
+        ShowMatrix(NodeSize,Core);
 
 //        for(int i = 0;i<Degree.size();i++)
 //        {
@@ -148,11 +154,47 @@ public class WorkOutData {
             }
             C = E/T;
             Result += C;
-            System.out.println(Result);
         }
         return Result/NodeSize;
     }
 
-    public static ArrayList<Integer>
+    public static int[][] Coreness(int NodeSize, int[][] matrix, ArrayList<Integer> degree)
+    {
+        int[][] CorResult = new int[NodeSize][NodeSize];
+        ArrayList<Integer> Degree = degree;
+        int core = 0;
+        int flag = 0;
+        while (1==1)
+        {
+            flag = 0;
+            for (int i =0 ;i<degree.size();i++)
+            {
+                if(Degree.get(i)==core)
+                {
+                    CorResult[core][i+1]=1;
+                    Degree.set(i,-1);
+                    for (int k =1 ;k<NodeSize;k++)
+                    {
+                        if(matrix[i+1][k]==1)
+                        {
+                            Degree.set(k,Degree.get(k)-1);
+                        }
+                    }
+                }
+            }
+        for(int x =0;x<Degree.size();x++)
+        {
+            if (Degree.get(x)!=0)
+            {
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 0)
+            break;
+        }
+        return CorResult;
+
+    }
 
 }
