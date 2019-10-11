@@ -167,31 +167,47 @@ public class WorkOutData {
         while (1==1)
         {
             flag = 0;
-            for (int i =0 ;i<degree.size();i++)
-            {
-                if(Degree.get(i)==core)
+            ArrayList<Integer> queue = new ArrayList<Integer>();
+            do {
+                queue.clear();
+                for (int i =0 ;i<Degree.size();i++)
                 {
-                    CorResult[core][i+1]=1;
-                    Degree.set(i,-1);
-                    for (int k =1 ;k<NodeSize;k++)
+                    if(Degree.get(i)<=-1)
+                        continue;
+                    if(Degree.get(i)<=core)
                     {
-                        if(matrix[i+1][k]==1)
+                        CorResult[core][i+1]=1;
+                        Degree.set(i,-1);
+                        queue.add(i);
+                    }
+                }
+                if (queue.size()>0)
+                {
+                    for (int i =0;i<queue.size();i++)
+                    {
+                        for (int k =1 ;k<NodeSize;k++)
                         {
-                            Degree.set(k,Degree.get(k)-1);
+                            if(matrix[queue.get(i)+1][k]==1)
+                            {
+                                Degree.set(k-1,Degree.get(k-1)-1);
+                            }
                         }
                     }
                 }
-            }
-        for(int x =0;x<Degree.size();x++)
-        {
-            if (Degree.get(x)!=0)
+            }while(queue.size()>0);
+            System.out.println(core);
+            System.out.println(Degree);
+            core++;
+            for(int x =0;x<Degree.size();x++)
             {
-                flag = 1;
-                break;
+                if (Degree.get(x)>-1)
+                {
+                    flag = 1;
+                    break;
+                }
             }
-        }
-        if (flag == 0)
-            break;
+            if (flag == 0)
+                break;
         }
         return CorResult;
 
